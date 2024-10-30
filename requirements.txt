@@ -1,1 +1,5 @@
+mysql-connector-python
 flask
+flask_login
+werkzeug
+Flask-Session
