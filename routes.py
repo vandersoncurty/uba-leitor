@@ -5,6 +5,7 @@ import os
 from db_config import create_connection
 from app import app
 from models import User
+import requests
 
 # Instância do Blueprint
 routes = Blueprint('routes', __name__)
@@ -45,7 +46,20 @@ def login():
 @routes.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-    return render_template('home.html')
+    connection = create_connection()
+    cursor = connection.cursor(dictionary=True)  # Recebe os dados como dicionário
+    try:
+        cursor.execute("SELECT book_id, title, author, whatsapp, book_type, cover_url, description FROM book")
+        books = cursor.fetchall()
+    except Exception as e:
+        flash(f"Erro ao carregar os livros: {e}")
+        books = []
+    finally:
+        cursor.close()
+        connection.close()
+
+    return render_template('home.html', books=books)
+
 
 @routes.route('/logout')
 @login_required
@@ -93,3 +107,55 @@ def register():
             connection.close()
 
     return render_template('register.html')
+
+
+
+
+@routes.route('/add_book', methods=['POST'])
+@login_required
+def add_book():
+    title = request.form.get('bookTitle')
+    author = request.form.get('bookAuthor')
+    whatsapp = request.form.get('whatsapp')
+    book_type = request.form.get('bookType')
+
+    # Debug: imprime valores recebidos
+    print("Recebido:", title, author, whatsapp, book_type)
+
+    if not title or not author or not whatsapp or not book_type:
+        return jsonify({"error": "Todos os campos são obrigatórios"}), 400
+    
+    # Buscar informações adicionais do livro usando a API do Google Books
+    try:
+        google_books_response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}+inauthor:{author}")
+        google_books_data = google_books_response.json()
+        
+        if google_books_data.get("items"):
+            volume_info = google_books_data["items"][0]["volumeInfo"]
+            cover_url = volume_info.get("imageLinks", {}).get("thumbnail", "")
+            description = volume_info.get("description", "")
+        else:
+            cover_url = ""  # Define um valor padrão caso não haja capa
+            description = "Descrição não disponível."
+        
+    except Exception as e:
+        return jsonify({"error": f"Erro ao buscar dados na API do Google Books: {str(e)}"}), 500
+
+
+    # Adicione o livro ao banco de dados
+    connection = create_connection()  # Conexão com o banco de dados
+    cursor = connection.cursor()
+    try:
+        cursor.execute("""
+            INSERT INTO book (title, author, whatsapp, book_type, cover_url, description)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (title, author, whatsapp, book_type, cover_url, description))
+        connection.commit()
+        return jsonify({"success": "Livro adicionado com sucesso!"}), 200
+    except Exception as e:
+        connection.rollback()
+        print("Erro ao adicionar ao banco:", e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
