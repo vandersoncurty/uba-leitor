@@ -3,3 +3,5 @@ flask
 flask_login
 werkzeug
 Flask-Session
+flask_sqlalchemy
+requests
