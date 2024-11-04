@@ -48,7 +48,7 @@ def home():
     connection = create_connection()
     cursor = connection.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT book_id, title, author, whatsapp, book_type, cover_url, description FROM book")
+        cursor.execute("SELECT book_id, title, author, whatsapp, book_type, cover_url, description, user_id FROM book")
         books = cursor.fetchall()
     except Exception as e:
         flash(f"Erro ao carregar os livros: {e}")
@@ -110,6 +110,11 @@ def register():
 @routes.route('/add_book', methods=['POST'])
 @login_required
 def add_book():
+
+    user_id = session.get('user_id') 
+    if not user_id:
+        return jsonify(error="Usuário não autenticado."), 403
+    
     title = request.form.get('bookTitle')
     author = request.form.get('bookAuthor')
     whatsapp = request.form.get('whatsapp')
@@ -140,9 +145,9 @@ def add_book():
     cursor = connection.cursor()
     try:
         cursor.execute("""
-            INSERT INTO book (title, author, whatsapp, book_type, cover_url, description)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (title, author, whatsapp, book_type, cover_url, description))
+            INSERT INTO book (title, author, whatsapp, book_type, cover_url, description, user_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (title, author, whatsapp, book_type, cover_url, description, user_id))
         connection.commit()
         return jsonify({"success": "Livro adicionado com sucesso!"}), 200
     except Exception as e:
