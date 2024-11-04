@@ -185,6 +185,7 @@
                     if (response.ok) {
                         alert(data.success);
                         $('#addBookModal').modal('hide');
+                        location.reload();
                     } else {
                         console.error('Erro:', data.error);
                         alert('Erro: ' + data.error);
