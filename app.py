@@ -3,7 +3,7 @@ from flask_login import LoginManager
 from flask_session import Session
 
 app = Flask(__name__)
-app.secret_key = 'miboutech'
+app.secret_key = '123456'
 
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
