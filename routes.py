@@ -46,7 +46,7 @@ def login():
 @login_required
 def home():
 
-    current_user_id = session.get('_user_id') 
+    current_user_id = int(session.get('_user_id'))
     if not current_user_id:
         return jsonify(error="Usuário não autenticado."), 403
     connection = create_connection()
@@ -117,7 +117,7 @@ def register():
 @login_required
 def add_book():
 
-    current_user_id = session.get('_user_id') 
+    current_user_id = int(session.get('_user_id'))
     if not current_user_id:
         return jsonify(error="Usuário não autenticado."), 403
     
@@ -167,16 +167,20 @@ def add_book():
 
 @app.route('/delete_book/<int:book_id>', methods=['DELETE'])
 def delete_book(book_id):
-    print("chamou")
-    conn = create_connection
+
+    current_user_id = int(session.get('_user_id'))
+    if not current_user_id:
+        return jsonify(error="Usuário não autenticado."), 403
+
+    conn = create_connection()
     cursor = conn.cursor(dictionary=True) 
     try:
         cursor.execute("SELECT * FROM book WHERE book_id = %s", (book_id,))
         book = cursor.fetchone()
         print(book)
 
-        if book and book['user_id'] == session.get('_user_id'):
-            cursor.execute("DELETE FROM book WHERE id = %s", (book_id,))
+        if book and book['user_id'] == current_user_id:
+            cursor.execute("DELETE FROM book WHERE book_id = %s", (book_id,))
             conn.commit()
             return jsonify({'success': 'Livro excluído com sucesso!'}), 200
         else:

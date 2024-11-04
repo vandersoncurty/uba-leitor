@@ -55,7 +55,7 @@
                         {{ 'Doação' if book.book_type == 'doacao' else 'Troca' }}
                     </span>
                     {% if book.user_id == current_user.id %}
-                    <button class="btn btn-danger btn-sm delete-btn" onclick="confirmDelete('{{ book.id }}', event)">
+                    <button class="btn btn-danger btn-sm delete-btn" onclick="confirmDelete('{{ book.book_id }}', event)">
                         🗑️
                     </button>
                     {% endif %}
@@ -93,6 +93,35 @@
             document.getElementById('modal-book-description').textContent = book.description || 'Descrição não disponível.';
             document.getElementById('modal-whatsapp-link').href = "https://wa.me/55" + book.whatsapp;
             $('#bookDetailsModal').modal('show');
+        }
+
+        async function deleteBook(bookId) {
+            try {
+                const response = await fetch(`/delete_book/${bookId}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    alert('Livro excluído com sucesso!');
+                    location.reload();
+                } else {
+
+                    const data = await response.text(); // Lê a resposta como texto
+                    alert('Erro: ' + data); // Exibe a mensagem de erro
+
+                    
+                }
+            } catch (error) {
+                    console.error('Erro ao tentar excluir o livro:', error);
+                    alert('Erro ao tentar excluir o livro.');
+                }
+        } 
+
+        function confirmDelete(bookId, event) {
+            event.stopPropagation();
+            if (confirm("Tem certeza de que deseja excluir este anúncio?")) {
+                deleteBook(bookId);
+            }
         }
     </script>
 
@@ -137,34 +166,6 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-
-    <script>
-        function confirmDelete(bookId, event) {
-            event.stopPropagation(); // Impede que o clique na lixeira abra o modal de detalhes do livro
-            if (confirm("Tem certeza de que deseja excluir este anúncio?")) {
-                deleteBook(bookId);
-            }
-        }
-        
-        async function deleteBook(bookId) {
-            try {
-                const response = await fetch(`/delete_book/${bookId}`, { method: 'DELETE' });
-                const data = await response.json();
-        
-                if (response.ok) {
-                    alert(data.success); // Exibe uma mensagem de sucesso
-                    location.reload(); // Recarrega a página para atualizar a lista de livros
-                } else {
-                    alert('Erro: ' + data.error);
-                }
-            } catch (error) {
-                console.error('Erro de rede:', error);
-                alert('Erro de rede ao tentar excluir o livro.');
-            }
-        }
-        
-    </script>
 
 
     <script>
