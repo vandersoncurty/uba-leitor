@@ -6,10 +6,10 @@ services:
       - "2000:8080"
 
     environment:
-      - DB_HOST=193.123.103.37
+      - DB_HOST=example.com
       - DB_PORT=1000
-      - DB_DATABASE=uba_leitor
-      - DB_USER=vanderson
-      - DB_PASSWORD=Tomorinao%5541
+      - DB_DATABASE=db_name
+      - DB_USER=db_user
+      - DB_PASSWORD=db_password
 
     restart: always
