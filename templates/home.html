@@ -190,10 +190,22 @@
             books.forEach(book => {
                 const title = book.volumeInfo.title;
                 const authors = book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : 'Desconhecido';
+                const coverUrl = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'https://via.placeholder.com/50x75';
 
                 const item = document.createElement('div');
                 item.className = 'autocomplete-item';
-                item.innerHTML = `${title} <br><small>Autor: ${authors}</small>`;
+                item.style.display = 'flex';
+                item.style.alignItems = 'center';
+                item.style.marginBottom = '5px';
+
+                item.innerHTML = `
+                <img src="${coverUrl}" alt="Capa do Livro" style="width: 50px; height: 75px; object-fit: cover; margin-right: 10px;">
+                <div>
+                    <strong>${title}</strong><br>
+                    <small>Autor: ${authors}</small>
+                </div>
+            `;
+            
                 item.onclick = () => {
                     document.getElementById('bookTitle').value = title;
                     document.getElementById('bookAuthor').value = authors;

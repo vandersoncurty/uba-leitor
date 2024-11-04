@@ -137,9 +137,11 @@ def add_book():
         if google_books_data.get("items"):
             volume_info = google_books_data["items"][0]["volumeInfo"]
             cover_url = volume_info.get("imageLinks", {}).get("thumbnail", "")
+            if not cover_url:
+                cover_url = "https://via.placeholder.com/100x150"
             description = volume_info.get("description", "")
         else:
-            cover_url = ""
+            cover_url = "https://via.placeholder.com/100x150"
             description = "Descrição não disponível."
         
     except Exception as e:
