@@ -7,7 +7,6 @@ from app import app
 from models import User
 import requests
 
-# Instância do Blueprint
 routes = Blueprint('routes', __name__)
 
 @app.route('/')
@@ -30,8 +29,8 @@ def login():
             cursor.execute("""SELECT user_id, email, password FROM user WHERE email = %s""", (email,))
             user = cursor.fetchone()
 
-            if user and check_password_hash(user[2], password):  # Índice 2 para a senha
-                login_user(User(user[0]))  # Índice 0 para o ID do usuário
+            if user and check_password_hash(user[2], password):
+                login_user(User(user[0]))
                 return redirect(url_for('routes.home'))
             else:
                 flash('Email ou senha incorretos')
@@ -47,7 +46,7 @@ def login():
 @login_required
 def home():
     connection = create_connection()
-    cursor = connection.cursor(dictionary=True)  # Recebe os dados como dicionário
+    cursor = connection.cursor(dictionary=True)
     try:
         cursor.execute("SELECT book_id, title, author, whatsapp, book_type, cover_url, description FROM book")
         books = cursor.fetchall()
@@ -83,17 +82,14 @@ def register():
 
         cursor = connection.cursor()
         try:
-            # Verificar se o email já está cadastrado
             cursor.execute("SELECT email FROM user WHERE email = %s", (email,))
             existing_user = cursor.fetchone()
             if existing_user:
                 flash("Email já cadastrado. Tente outro.")
                 return render_template('register.html')
 
-            # Gerar o hash da senha
             hashed_password = generate_password_hash(password)
 
-            # Inserindo o novo usuário na tabela
             cursor.execute("""INSERT INTO user (name, phone, email, password) 
                               VALUES (%s, %s, %s, %s)""",
                            (nome, telefone, email, hashed_password))
@@ -119,13 +115,11 @@ def add_book():
     whatsapp = request.form.get('whatsapp')
     book_type = request.form.get('bookType')
 
-    # Debug: imprime valores recebidos
     print("Recebido:", title, author, whatsapp, book_type)
 
     if not title or not author or not whatsapp or not book_type:
         return jsonify({"error": "Todos os campos são obrigatórios"}), 400
     
-    # Buscar informações adicionais do livro usando a API do Google Books
     try:
         google_books_response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}+inauthor:{author}")
         google_books_data = google_books_response.json()
@@ -135,15 +129,14 @@ def add_book():
             cover_url = volume_info.get("imageLinks", {}).get("thumbnail", "")
             description = volume_info.get("description", "")
         else:
-            cover_url = ""  # Define um valor padrão caso não haja capa
+            cover_url = ""
             description = "Descrição não disponível."
         
     except Exception as e:
         return jsonify({"error": f"Erro ao buscar dados na API do Google Books: {str(e)}"}), 500
 
 
-    # Adicione o livro ao banco de dados
-    connection = create_connection()  # Conexão com o banco de dados
+    connection = create_connection()
     cursor = connection.cursor()
     try:
         cursor.execute("""

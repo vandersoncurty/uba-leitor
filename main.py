@@ -1,12 +1,11 @@
 import os
 from flask import Flask
 from flask_login import LoginManager
-from mysql.connector import connect, Error  # Altere para o conector MySQL
+from mysql.connector import connect, Error
 from db_config import create_connection, close_connection
 from models import User
 from app import app, login_manager
 
-# Certifique-se de que os diretórios de upload e download existam
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
@@ -17,7 +16,7 @@ if not os.path.exists(app.config['DOWNLOAD_FOLDER']):
 def load_user(user_id):
     connection = create_connection()
     try:
-        cursor = connection.cursor(dictionary=True)  # Use 'dictionary=True' para retornar dicionários
+        cursor = connection.cursor(dictionary=True)
         cursor.execute("SELECT user_id FROM user WHERE user_id = %s", (user_id,))
         user = cursor.fetchone()
     except Error as e:
@@ -28,10 +27,9 @@ def load_user(user_id):
         connection.close()
         
     if user:
-        return User(user['user_id'])  # Acesse o ID do usuário no dicionário
+        return User(user['user_id'])
     return None
 
-# Importa e registra as rotas a partir do Blueprint
 from routes import routes
 app.register_blueprint(routes)
 

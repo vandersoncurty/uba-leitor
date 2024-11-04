@@ -5,7 +5,7 @@ from flask_session import Session
 app = Flask(__name__)
 app.secret_key = 'miboutech'
 
-app.config['SESSION_TYPE'] = 'filesystem'  # ou 'redis', 'memcached', etc.
+app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
 login_manager = LoginManager()

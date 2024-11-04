@@ -3,11 +3,9 @@ import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
 
-# Carregar variáveis de ambiente do arquivo .env
 load_dotenv()
 
 def create_connection():
-    """Cria uma conexão ao banco de dados MySQL."""
     try:
         connection = mysql.connector.connect(
             host=os.getenv('DB_HOST'),
@@ -24,7 +22,6 @@ def create_connection():
         return None
 
 def close_connection(connection):
-    """Fecha a conexão ao banco de dados MySQL."""
     if connection.is_connected():
         connection.close()
         print("Conexão ao banco de dados encerrada")

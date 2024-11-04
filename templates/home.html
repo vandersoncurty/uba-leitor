@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Página Inicial - Doação e Troca de Livros</title>
+    <title>Página Inicial - Ubá Leitor</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .book-item {
@@ -39,7 +39,6 @@
         <h1>Livros Disponíveis</h1>
         <button class="btn btn-primary" id="addBookBtn">Adicionar Novo Anúncio</button>
         <div id="books-list" class="mt-4 row">
-            <!-- Os livros serão inseridos aqui dinamicamente -->
             {% for book in books %}
             <div class="col-md-3 book-item" onclick="showBookDetails({
                 title: '{{ book.title }}',
@@ -61,7 +60,6 @@
         </div>
     </div>
 
-    <!-- Modal para detalhes do livro -->
     <div class="modal fade" id="bookDetailsModal" tabindex="-1" role="dialog" aria-labelledby="bookDetailsLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -93,7 +91,6 @@
         }
     </script>
 
-    <!-- Modal para adicionar novo anúncio -->
     <div class="modal fade" id="addBookModal" tabindex="-1" role="dialog" aria-labelledby="addBookLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -116,7 +113,7 @@
                         </div>
                         <div class="form-group">
                             <label for="whatsapp">Número do WhatsApp</label>
-                            <input type="text" class="form-control" id="whatsapp" name="whatsapp" placeholder="Telefone com DDD" required>
+                            <input type="text" class="form-control" id="whatsapp" name="whatsapp" placeholder="Telefone com DDD (Apenas números)" required>
                         </div>
                         <div class="form-group">
                             <label for="bookType">Tipo de Anúncio</label>
@@ -141,20 +138,18 @@
             $('#addBookModal').modal('show');
         };
 
-        // Função para buscar livros na API do Google Books
         async function searchBooks(query) {
             const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=5`);
             const data = await response.json();
             return data.items || [];
         }
 
-        // Adiciona evento de input ao campo de título do livro
         document.getElementById('bookTitle').addEventListener('input', async function() {
             const query = this.value;
             const autocompleteList = document.getElementById('autocomplete-list');
-            autocompleteList.innerHTML = ''; // Limpa a lista existente
+            autocompleteList.innerHTML = '';
 
-            if (query.length < 2) return; // Não busca se a query tiver menos de 2 caracteres
+            if (query.length < 2) return;
 
             const books = await searchBooks(query);
             books.forEach(book => {
@@ -167,7 +162,7 @@
                 item.onclick = () => {
                     document.getElementById('bookTitle').value = title;
                     document.getElementById('bookAuthor').value = authors;
-                    autocompleteList.innerHTML = ''; // Limpa a lista
+                    autocompleteList.innerHTML = '';
                 };
                 autocompleteList.appendChild(item);
             });
@@ -175,9 +170,9 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('addBookForm').onsubmit = async function(event) {
-                event.preventDefault(); // Evita o envio padrão do formulário
+                event.preventDefault();
 
-                const formData = new FormData(this); // Coleta os dados do formulário
+                const formData = new FormData(this);
 
                 try {
                     const response = await fetch('/add_book', {
@@ -185,14 +180,14 @@
                         body: formData,
                     });
 
-                    const data = await response.json(); // Converte a resposta em JSON
+                    const data = await response.json();
 
                     if (response.ok) {
-                        alert(data.success); // Alerta de sucesso
-                        $('#addBookModal').modal('hide'); // Fecha o modal
+                        alert(data.success);
+                        $('#addBookModal').modal('hide');
                     } else {
                         console.error('Erro:', data.error);
-                        alert('Erro: ' + data.error); // Alerta de erro
+                        alert('Erro: ' + data.error);
                     }
                 } catch (error) {
                     console.error('Erro de rede:', error);
