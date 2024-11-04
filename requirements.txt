@@ -5,4 +5,4 @@ werkzeug
 Flask-Session
 flask_sqlalchemy
 requests
-dotenv
+python-dotenv
