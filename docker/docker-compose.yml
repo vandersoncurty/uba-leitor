@@ -1,0 +1,15 @@
+services:
+  uba_leitor:
+    build: .
+    container_name: uba_leitor
+    ports:
+      - "2000:8080"
+
+    environment:
+      - DB_HOST=193.123.103.37
+      - DB_PORT=1000
+      - DB_DATABASE=uba_leitor
+      - DB_USER=vanderson
+      - DB_PASSWORD=Tomorinao%5541
+
+    restart: always
