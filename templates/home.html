@@ -54,6 +54,11 @@
                     <span class="badge badge-{{ 'success' if book.book_type == 'doacao' else 'primary' }}">
                         {{ 'Doação' if book.book_type == 'doacao' else 'Troca' }}
                     </span>
+                    {% if book.user_id == current_user.id %}
+                    <button class="btn btn-danger btn-sm delete-btn" onclick="confirmDelete('{{ book.id }}', event)">
+                        🗑️
+                    </button>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -132,6 +137,35 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+    <script>
+        function confirmDelete(bookId, event) {
+            event.stopPropagation(); // Impede que o clique na lixeira abra o modal de detalhes do livro
+            if (confirm("Tem certeza de que deseja excluir este anúncio?")) {
+                deleteBook(bookId);
+            }
+        }
+        
+        async function deleteBook(bookId) {
+            try {
+                const response = await fetch(`/delete_book/${bookId}`, { method: 'DELETE' });
+                const data = await response.json();
+        
+                if (response.ok) {
+                    alert(data.success); // Exibe uma mensagem de sucesso
+                    location.reload(); // Recarrega a página para atualizar a lista de livros
+                } else {
+                    alert('Erro: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Erro de rede:', error);
+                alert('Erro de rede ao tentar excluir o livro.');
+            }
+        }
+        
+    </script>
+
 
     <script>
         document.getElementById('addBookBtn').onclick = function() {

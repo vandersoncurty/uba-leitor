@@ -45,18 +45,24 @@ def login():
 @routes.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
+
+    current_user_id = session.get('_user_id') 
+    if not current_user_id:
+        return jsonify(error="Usuário não autenticado."), 403
     connection = create_connection()
     cursor = connection.cursor(dictionary=True)
     try:
         cursor.execute("SELECT book_id, title, author, whatsapp, book_type, cover_url, description, user_id FROM book")
         books = cursor.fetchall()
+        for book in books:
+            book['current_user'] = current_user_id
     except Exception as e:
+        print(f"Erro ao carregar os livros: {e}")
         flash(f"Erro ao carregar os livros: {e}")
         books = []
     finally:
         cursor.close()
         connection.close()
-
     return render_template('home.html', books=books)
 
 
@@ -111,8 +117,8 @@ def register():
 @login_required
 def add_book():
 
-    user_id = session.get('user_id') 
-    if not user_id:
+    current_user_id = session.get('_user_id') 
+    if not current_user_id:
         return jsonify(error="Usuário não autenticado."), 403
     
     title = request.form.get('bookTitle')
@@ -120,7 +126,6 @@ def add_book():
     whatsapp = request.form.get('whatsapp')
     book_type = request.form.get('bookType')
 
-    print("Recebido:", title, author, whatsapp, book_type)
 
     if not title or not author or not whatsapp or not book_type:
         return jsonify({"error": "Todos os campos são obrigatórios"}), 400
@@ -147,7 +152,7 @@ def add_book():
         cursor.execute("""
             INSERT INTO book (title, author, whatsapp, book_type, cover_url, description, user_id)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (title, author, whatsapp, book_type, cover_url, description, user_id))
+        """, (title, author, whatsapp, book_type, cover_url, description, current_user_id))
         connection.commit()
         return jsonify({"success": "Livro adicionado com sucesso!"}), 200
     except Exception as e:
@@ -157,3 +162,29 @@ def add_book():
     finally:
         cursor.close()
         connection.close()
+
+
+
+@app.route('/delete_book/<int:book_id>', methods=['DELETE'])
+def delete_book(book_id):
+    print("chamou")
+    conn = create_connection
+    cursor = conn.cursor(dictionary=True) 
+    try:
+        cursor.execute("SELECT * FROM book WHERE book_id = %s", (book_id,))
+        book = cursor.fetchone()
+        print(book)
+
+        if book and book['user_id'] == session.get('_user_id'):
+            cursor.execute("DELETE FROM book WHERE id = %s", (book_id,))
+            conn.commit()
+            return jsonify({'success': 'Livro excluído com sucesso!'}), 200
+        else:
+            return jsonify({'error': 'Ação não permitida!'}), 403
+    except Exception as e:
+        conn.rollback()
+        print("Erro ao excluir do banco:", e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
