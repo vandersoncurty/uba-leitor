@@ -5,13 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+          background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
+          background-size: cover; /* Faz a imagem cobrir toda a área da página */
+          background-position: center; /* Centraliza a imagem */
+          background-repeat: no-repeat; /* Evita que a imagem se repita */
+          background-attachment: fixed; /* A imagem fica fixa ao rolar a página */
+      }
+  </style>
 </head>
 <body>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="text-center mt-5">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="img-fluid" style="max-width: 25%;">
+                    <img src="{{ url_for('static', filename='./images/logo.png') }}" alt="Logo" class="img-fluid" style="max-width: 25%;">
                 </div>
                 <h1 class="mt-5">Login</h1>
                 <form method="post" class="mt-4">
