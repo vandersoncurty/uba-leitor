@@ -6,51 +6,63 @@
     <title>Login</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      body {
-          background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
-          background-size: cover; /* Faz a imagem cobrir toda a área da página */
-          background-position: center; /* Centraliza a imagem */
-          background-repeat: no-repeat; /* Evita que a imagem se repita */
-          background-attachment: fixed; /* A imagem fica fixa ao rolar a página */
-      }
-  </style>
+        body {
+            background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .form-container {
+            background-color: #e0df8f;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="text-center mt-5">
-                    <img src="{{ url_for('static', filename='./images/logo.png') }}" alt="Logo" class="img-fluid" style="max-width: 25%;">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="img-fluid" style="max-width: 40%;">
                 </div>
-                <h1 class="mt-5">Login</h1>
-                <form method="post" class="mt-4">
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="Digite seu email" required>
+                <div class="form-container">
+                    <h1 class="text-center">Login</h1>
+                    <form method="post" class="mt-4">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" class="form-control" placeholder="Digite seu email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Senha</label>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Digite sua senha" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block mt-3">Entrar</button>
+                    </form>
+                    
+                    {% with messages = get_flashed_messages() %}
+                      {% if messages %}
+                        <div class="alert alert-danger mt-3">
+                          <ul class="mb-0">
+                            {% for message in messages %}
+                              <li>{{ message }}</li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      {% endif %}
+                    {% endwith %}
+                    
+                    <div class="mt-3 text-center">
+                        <a href="{{ url_for('routes.register') }}" class="btn btn-link">Registrar-se</a>
                     </div>
-                    <div class="form-group">
-                        <label for="password">Senha</label>
-                        <input type="password" id="password" name="password" class="form-control" placeholder="Digite sua senha" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Entrar</button>
-                </form>
-                {% with messages = get_flashed_messages() %}
-                  {% if messages %}
-                    <div class="alert alert-danger mt-3">
-                      <ul class="mb-0">
-                        {% for message in messages %}
-                          <li>{{ message }}</li>
-                        {% endfor %}
-                      </ul>
-                    </div>
-                  {% endif %}
-                {% endwith %}
-                <div class="mt-3 text-center">
-                    <a href="{{ url_for('routes.register') }}" class="btn btn-link">Registrar-se</a>
                 </div>
             </div>
         </div>
     </div>
+    
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
