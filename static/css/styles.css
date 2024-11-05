@@ -1,0 +1,39 @@
+/* styles.css */
+body {
+    background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    background-attachment: fixed; 
+}
+
+.book-item {
+    margin: 20px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.book-cover {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.autocomplete-list {
+    border: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    z-index: 1000;
+    background-color: white;
+    width: calc(100% - 30px);
+}
+
+.autocomplete-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.autocomplete-item:hover {
+    background-color: #f0f0f0;
+}

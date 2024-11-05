@@ -5,34 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Página Inicial - Ubá Leitor</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .book-item {
-            margin: 20px;
-            cursor: pointer;
-            text-align: center; /* Alinha o texto ao centro */
-        }
-        .book-cover {
-            width: 100px;
-            height: 150px;
-            object-fit: cover;
-        }
-        .autocomplete-list {
-            border: 1px solid #ddd;
-            max-height: 200px;
-            overflow-y: auto;
-            position: absolute;
-            z-index: 1000;
-            background-color: white;
-            width: calc(100% - 30px);
-        }
-        .autocomplete-item {
-            padding: 10px;
-            cursor: pointer;
-        }
-        .autocomplete-item:hover {
-            background-color: #f0f0f0;
-        }
-    </style>
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">  <!-- Adicionando o CSS -->
 </head>
 <body>
     <div class="container mt-5">
@@ -85,46 +58,6 @@
         </div>
     </div>
 
-    <script>
-        function showBookDetails(book) {
-            document.getElementById('modal-book-cover').src = book.cover_url || 'https://via.placeholder.com/100x150';
-            document.getElementById('modal-book-title').textContent = book.title;
-            document.getElementById('modal-book-author').textContent = "Autor: " + book.author;
-            document.getElementById('modal-book-description').textContent = book.description || 'Descrição não disponível.';
-            document.getElementById('modal-whatsapp-link').href = "https://wa.me/55" + book.whatsapp;
-            $('#bookDetailsModal').modal('show');
-        }
-
-        async function deleteBook(bookId) {
-            try {
-                const response = await fetch(`/delete_book/${bookId}`, {
-                    method: 'DELETE',
-                });
-
-                if (response.ok) {
-                    alert('Livro excluído com sucesso!');
-                    location.reload();
-                } else {
-
-                    const data = await response.text(); // Lê a resposta como texto
-                    alert('Erro: ' + data); // Exibe a mensagem de erro
-
-                    
-                }
-            } catch (error) {
-                    console.error('Erro ao tentar excluir o livro:', error);
-                    alert('Erro ao tentar excluir o livro.');
-                }
-        } 
-
-        function confirmDelete(bookId, event) {
-            event.stopPropagation();
-            if (confirm("Tem certeza de que deseja excluir este anúncio?")) {
-                deleteBook(bookId);
-            }
-        }
-    </script>
-
     <div class="modal fade" id="addBookModal" tabindex="-1" role="dialog" aria-labelledby="addBookLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -146,25 +79,24 @@
                             <input type="text" class="form-control" id="bookAuthor" name="bookAuthor" required>
                         </div>
                         <div class="form-group">
-                            <label for="whatsapp">Número do WhatsApp</label>
-                            <input type="text" class="form-control" id="whatsapp" name="whatsapp" placeholder="Telefone com DDD (Apenas números)" required>
+                            <input type="hidden" class="form-control" id="coverUrl" name="coverUrl">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Descrição</label>
+                            <textarea class="form-control" id="description" name="description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="whatsapp">WhatsApp</label>
+                            <input type="text" class="form-control" id="whatsapp" name="whatsapp" required>
                         </div>
                         <div class="form-group">
                             <label for="bookType">Tipo de Anúncio</label>
                             <select class="form-control" id="bookType" name="bookType" required>
                                 <option value="doacao">Doação</option>
-                                <option value="troca">Apenas Troca</option>
+                                <option value="troca">Troca</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <input type="hidden" class="form-control" id="coverUrl" name="coverUrl">
-                            <div id="autocomplete-list" class="autocomplete-list"></div>
-                        </div>
-                        <div class="form-group">
-                            <input type="hidden" class="form-control" id="description" name="description">
-                            <div id="autocomplete-list" class="autocomplete-list"></div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                        <button type="submit" class="btn btn-primary">Adicionar Livro</button>
                     </form>
                 </div>
             </div>
@@ -174,86 +106,6 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-
-    <script>
-        document.getElementById('addBookBtn').onclick = function() {
-            $('#addBookModal').modal('show');
-        };
-
-        async function searchBooks(query) {
-            const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=5`);
-            const data = await response.json();
-            return data.items || [];
-        }
-
-        document.getElementById('bookTitle').addEventListener('input', async function() {
-            const query = this.value;
-            const autocompleteList = document.getElementById('autocomplete-list');
-            autocompleteList.innerHTML = '';
-
-            if (query.length < 2) return;
-
-            const books = await searchBooks(query);
-            books.forEach(book => {
-                const title = book.volumeInfo.title;
-                const authors = book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : 'Desconhecido';
-                const coverUrl = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'https://via.placeholder.com/50x75';
-                const description = book.volumeInfo.description;
-
-                const item = document.createElement('div');
-                item.className = 'autocomplete-item';
-                item.style.display = 'flex';
-                item.style.alignItems = 'center';
-                item.style.marginBottom = '5px';
-
-                item.innerHTML = `
-                <img src="${coverUrl}" alt="Capa do Livro" style="width: 50px; height: 75px; object-fit: cover; margin-right: 10px;">
-                <div>
-                    <strong>${title}</strong><br>
-                    <small>Autor: ${authors}</small>
-                </div>
-            `;
-
-                item.onclick = () => {
-                    document.getElementById('bookTitle').value = title;
-                    document.getElementById('bookAuthor').value = authors;
-                    document.getElementById('coverUrl').value = coverUrl;
-                    document.getElementById('description').value = description;
-                    autocompleteList.innerHTML = '';
-                };
-                autocompleteList.appendChild(item);
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('addBookForm').onsubmit = async function(event) {
-                event.preventDefault();
-
-                const formData = new FormData(this);
-
-                try {
-                    const response = await fetch('/add_book', {
-                        method: 'POST',
-                        body: formData,
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok) {
-                        alert(data.success);
-                        $('#addBookModal').modal('hide');
-                        location.reload();
-                    } else {
-                        console.error('Erro:', data.error);
-                        alert('Erro: ' + data.error);
-                    }
-                } catch (error) {
-                    console.error('Erro de rede:', error);
-                    alert('Erro de rede ao tentar adicionar o livro.');
-                }
-            };
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>  <!-- Adicionando o JavaScript -->
 </body>
 </html>
