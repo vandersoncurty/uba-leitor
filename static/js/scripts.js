@@ -77,6 +77,11 @@ document.getElementById('bookTitle').addEventListener('input', async function() 
             document.getElementById('bookAuthor').value = authors;
             document.getElementById('coverUrl').value = coverUrl;
             document.getElementById('description').value = description;
+
+            const previewCover = document.getElementById('previewCover');
+            previewCover.src = coverUrl;
+            previewCover.style.display = 'block';
+
             autocompleteList.innerHTML = '';
         };
         autocompleteList.appendChild(item);
