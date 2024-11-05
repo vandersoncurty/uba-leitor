@@ -37,3 +37,11 @@ body {
 .autocomplete-item:hover {
     background-color: #f0f0f0;
 }
+
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-body {
+    background-color: #f8f9fa;
+}

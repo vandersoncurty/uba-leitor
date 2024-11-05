@@ -66,9 +66,9 @@
     <div class="modal fade" id="addBookModal" tabindex="-1" role="dialog" aria-labelledby="addBookLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document"> <!-- Modal grande -->
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-white text-black">
                     <h5 class="modal-title" id="addBookLabel">Adicionar Novo Anúncio</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -76,20 +76,20 @@
                     <form id="addBookForm">
                         <div class="form-group">
                             <label for="bookTitle">Título do Livro</label>
-                            <input type="text" class="form-control" id="bookTitle" name="bookTitle" required autocomplete="off">
+                            <input type="text" class="form-control rounded-pill" id="bookTitle" name="bookTitle" required autocomplete="off">
                             <div id="autocomplete-list" class="autocomplete-list"></div>
                         </div>
                         <div class="form-group">
                             <label for="bookAuthor">Autor</label>
-                            <input type="text" class="form-control" id="bookAuthor" name="bookAuthor" required>
+                            <input type="text" class="form-control rounded-pill" id="bookAuthor" name="bookAuthor" required>
                         </div>
                         <div class="form-group">
                             <label for="whatsapp">Número do WhatsApp</label>
-                            <input type="text" class="form-control" id="whatsapp" name="whatsapp" placeholder="Telefone com DDD (Apenas números)" required>
+                            <input type="text" class="form-control rounded-pill" id="whatsapp" name="whatsapp" placeholder="Telefone com DDD (Apenas números)" required>
                         </div>
                         <div class="form-group">
                             <label for="bookType">Tipo de Anúncio</label>
-                            <select class="form-control" id="bookType" name="bookType" required>
+                            <select class="form-control rounded-pill" id="bookType" name="bookType" required>
                                 <option value="doacao">Doação</option>
                                 <option value="troca">Apenas Troca</option>
                             </select>
@@ -99,20 +99,21 @@
                         </div>
                         <div class="form-group">
                             <label for="description">Descrição</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Descrição do livro"></textarea>
+                            <textarea class="form-control rounded" id="description" name="description" rows="3" placeholder="Descrição do livro"></textarea>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group text-center">
                             <label>Pré-visualização da Capa</label>
-                            <div id="coverPreview" class="text-center">
-                                <img id="previewCover" src="https://via.placeholder.com/150x225" alt="Pré-visualização da Capa" class="img-fluid" style="max-width: 150px; max-height: 225px; object-fit: cover; display: none;">
+                            <div id="coverPreview">
+                                <img id="previewCover" src="https://via.placeholder.com/150x225" alt="Pré-visualização da Capa" class="img-fluid rounded" style="max-width: 150px; max-height: 225px; object-fit: cover; display: none; border: 2px solid #007bff; padding: 5px;">
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Confirmar</button>
+                        <button type="submit" class="btn btn-primary btn-block rounded-pill">Confirmar</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    
     
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
