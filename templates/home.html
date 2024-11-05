@@ -156,6 +156,14 @@
                                 <option value="troca">Apenas Troca</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <input type="hidden" class="form-control" id="coverUrl" name="coverUrl">
+                            <div id="autocomplete-list" class="autocomplete-list"></div>
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" class="form-control" id="description" name="description">
+                            <div id="autocomplete-list" class="autocomplete-list"></div>
+                        </div>
                         <button type="submit" class="btn btn-primary">Confirmar</button>
                     </form>
                 </div>
@@ -191,6 +199,7 @@
                 const title = book.volumeInfo.title;
                 const authors = book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : 'Desconhecido';
                 const coverUrl = book.volumeInfo.imageLinks ? book.volumeInfo.imageLinks.thumbnail : 'https://via.placeholder.com/50x75';
+                const description = book.volumeInfo.description;
 
                 const item = document.createElement('div');
                 item.className = 'autocomplete-item';
@@ -205,10 +214,12 @@
                     <small>Autor: ${authors}</small>
                 </div>
             `;
-            
+
                 item.onclick = () => {
                     document.getElementById('bookTitle').value = title;
                     document.getElementById('bookAuthor').value = authors;
+                    document.getElementById('coverUrl').value = coverUrl;
+                    document.getElementById('description').value = description;
                     autocompleteList.innerHTML = '';
                 };
                 autocompleteList.appendChild(item);

@@ -125,29 +125,13 @@ def add_book():
     author = request.form.get('bookAuthor')
     whatsapp = request.form.get('whatsapp')
     book_type = request.form.get('bookType')
+    cover_url = request.form.get('coverUrl')
+    description = request.form.get('description')
 
 
     if not title or not author or not whatsapp or not book_type:
         return jsonify({"error": "Todos os campos são obrigatórios"}), 400
     
-    try:
-        google_books_response = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}+inauthor:{author}")
-        google_books_data = google_books_response.json()
-        
-        if google_books_data.get("items"):
-            volume_info = google_books_data["items"][0]["volumeInfo"]
-            cover_url = volume_info.get("imageLinks", {}).get("thumbnail", "")
-            if not cover_url:
-                cover_url = "https://via.placeholder.com/100x150"
-            description = volume_info.get("description", "")
-        else:
-            cover_url = "https://via.placeholder.com/100x150"
-            description = "Descrição não disponível."
-        
-    except Exception as e:
-        return jsonify({"error": f"Erro ao buscar dados na API do Google Books: {str(e)}"}), 500
-
-
     connection = create_connection()
     cursor = connection.cursor()
     try:
